@@ -1,12 +1,13 @@
 import { degToRad } from './helper';
 
 class Snake {
-  constructor({ x, y, angle, length, game }) {
+  constructor({ x, y, angle, length, game, mode }) {
     this.color = '#000';
     this.x = x;
     this.y = y;
     this.angle = angle;
     this.length = length;
+    this.mode = mode;
     this.game = game;
     this.ctx = game.ctx;
     this.coordinates = [];
@@ -63,53 +64,71 @@ class Snake {
   findSnakeCollision() {
     this.coordinates.slice(0, -Snake.HEAD_RADIUS).forEach(({ x, y }) => {
       const distance = Math.sqrt((x - this.x) ** 2 + (y - this.y) ** 2);
-      if (distance < Snake.HEAD_RADIUS + 2) {
-      // if (distance < 2) {
+      let condition = this.mode === 'flex' ? distance < Snake.HEAD_RADIUS + 2 : distance < 2;
+      if (condition) {
         this.finishGame()
       };
     });
   };
 
   directionControl(e) {
-    const { game } = this;
+    const { game, mode } = this;
     if (game.finished) return;
-    switch(e.keyCode) {
-      case 37:
-        this.turnLeft();
-        break;
-      // case 38:
-      //   this.turnTop();
-      //   break;
-      case 39:
-        this.turnRight();
-        break;
-      // case 40:
-      //   this.turnDown();
-      //   break;
-      default:
+    if (mode === 'flex') {
+      switch(e.keyCode) {
+        case 37:
+          this.turnLeftFlex();
+          break;
+        case 39:
+          this.turnRightFlex();
+          break;
+        default:
+      };
+    } else if (mode === 'classic') {
+      switch(e.keyCode) {
+        case 37:
+          this.turnLeftClassic();
+          break;
+        case 38:
+          this.turnTop();
+          break;
+        case 39:
+          this.turnRightClassic();
+          break;
+        case 40:
+          this.turnDown();
+          break;
+        default:
+      };
     };
   };
 
-  turnLeft() {
+  turnLeftFlex() {
     this.angle -= Snake.ROTATION_SPEED;
-    // if (this.angle !== 0) this.angle = 180;
     this.move(true);
   };
 
-  turnRight() {
+  turnLeftClassic() {
+    if (this.angle !== 0) this.angle = 180;
+    this.move(true);
+  };
+
+  turnRightFlex() {
     this.angle += Snake.ROTATION_SPEED;
-    // if (this.angle !== 180) this.angle = 0;
+    this.move(true);
+  };
+
+  turnRightClassic() {
+    if (this.angle !== 180) this.angle = 0;
     this.move(true);
   };
 
   turnDown() {
-    // this.angle += Snake.ROTATION_SPEED;
     if (this.angle !== 270) this.angle = 90;
     this.move(true);
   };
 
   turnTop() {
-    // this.angle += Snake.ROTATION_SPEED;
     if (this.angle !== 90) this.angle = 270;
     this.move(true);
   };

@@ -22,3 +22,10 @@
 .snake__btn {
   font-size: 24px;
   border-radius: 4px; }
+
+.snake__select-wrapper {
+  font-size: 24px; }
+
+.snake__select {
+  font-size: 46px;
+  vertical-align: text-bottom; }
